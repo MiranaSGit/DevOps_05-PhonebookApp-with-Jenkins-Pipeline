@@ -16,7 +16,7 @@ services:
         networks:
             - mirananet
     app-server:
-        image: 360800251837.dkr.ecr.us-east-1.amazonaws.com/clarusway-repo/phonebook-app:latest
+        image: 360800251837.dkr.ecr.us-east-1.amazonaws.com/mirana-repo/phonebook-app:latest
         deploy:
             mode: global
             update_config:
