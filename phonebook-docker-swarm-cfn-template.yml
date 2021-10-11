@@ -25,12 +25,12 @@ Resources:
               - ec2-instance-connect:SendSSHPublicKey
             Resource:
               - !Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/*
-            Condition: {"StringEquals": {"aws:ResourceTag/project":"204"}}
+            Condition: { "StringEquals": { "aws:ResourceTag/project": "204" } }
           - Effect: Allow
             Action:
               - ec2:DescribeInstances
             Resource: "*"
-  
+
   EC2InstanceConnect:
     Type: "AWS::IAM::Role"
     Properties:
@@ -39,9 +39,9 @@ Resources:
           - Effect: Allow
             Principal:
               Service:
-              - ec2.amazonaws.com
+                - ec2.amazonaws.com
             Action:
-              - 'sts:AssumeRole'
+              - "sts:AssumeRole"
       ManagedPolicyArns:
         - !Ref InstanceConnectPolicy
         - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess
@@ -90,37 +90,36 @@ Resources:
         ImageId: ami-087c17d1fe0178315
         InstanceType: t2.micro
         KeyName: !Ref KeyPairName
-        IamInstanceProfile: 
+        IamInstanceProfile:
           Arn: !GetAtt EC2ConnectProfile.Arn
         SecurityGroupIds:
           - !GetAtt DockerMachinesSecurityGroup.GroupId
         UserData:
-          Fn::Base64: 
-            !Sub |
-              #! /bin/bash
-              yum update -y
-              amazon-linux-extras install docker -y
-              systemctl start docker
-              systemctl enable docker
-              usermod -a -G docker ec2-user
-              curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" \
-              -o /usr/local/bin/docker-compose
-              chmod +x /usr/local/bin/docker-compose
-              yum install python3 -y
-              amazon-linux-extras install epel -y
-              yum install python-pip -y
-              pip install ec2instanceconnectcli
-              eval "$(mssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no  \
-                --region ${AWS::Region} ${DockerManager1} docker swarm join-token manager | grep -i 'docker')"
-              # uninstall aws cli version 1
-              rm -rf /bin/aws
-              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-              unzip awscliv2.zip
-              ./aws/install
-              yum install amazon-ecr-credential-helper -y
-              mkdir -p /home/ec2-user/.docker
-              cd /home/ec2-user/.docker
-              echo '{"credsStore": "ecr-login"}' > config.json
+          Fn::Base64: !Sub |
+            #! /bin/bash
+            yum update -y
+            amazon-linux-extras install docker -y
+            systemctl start docker
+            systemctl enable docker
+            usermod -a -G docker ec2-user
+            curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" \
+            -o /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+            yum install python3 -y
+            amazon-linux-extras install epel -y
+            yum install python-pip -y
+            pip install ec2instanceconnectcli
+            eval "$(mssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no  \
+              --region ${AWS::Region} ${DockerManager1} docker swarm join-token manager | grep -i 'docker')"
+            # uninstall aws cli version 1
+            rm -rf /bin/aws
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            ./aws/install
+            yum install amazon-ecr-credential-helper -y
+            mkdir -p /home/ec2-user/.docker
+            cd /home/ec2-user/.docker
+            echo '{"credsStore": "ecr-login"}' > config.json
   DockerSwarmWorkerLT:
     Type: "AWS::EC2::LaunchTemplate"
     Properties:
@@ -128,37 +127,36 @@ Resources:
         ImageId: ami-087c17d1fe0178315
         InstanceType: t2.micro
         KeyName: !Ref KeyPairName
-        IamInstanceProfile: 
+        IamInstanceProfile:
           Arn: !GetAtt EC2ConnectProfile.Arn
         SecurityGroupIds:
           - !GetAtt DockerMachinesSecurityGroup.GroupId
         UserData:
-          Fn::Base64: 
-            !Sub |
-              #! /bin/bash
-              yum update -y
-              amazon-linux-extras install docker -y
-              systemctl start docker
-              systemctl enable docker
-              usermod -a -G docker ec2-user
-              curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" \
-              -o /usr/local/bin/docker-compose
-              chmod +x /usr/local/bin/docker-compose
-              yum install python3 -y
-              amazon-linux-extras install epel -y
-              yum install python-pip -y
-              pip install ec2instanceconnectcli
-              eval "$(mssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no  \
-                --region ${AWS::Region} ${DockerManager1} docker swarm join-token worker | grep -i 'docker')"
-              # uninstall aws cli version 1
-              rm -rf /bin/aws
-              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-              unzip awscliv2.zip
-              ./aws/install
-              yum install amazon-ecr-credential-helper -y
-              mkdir -p /home/ec2-user/.docker
-              cd /home/ec2-user/.docker
-              echo '{"credsStore": "ecr-login"}' > config.json
+          Fn::Base64: !Sub |
+            #! /bin/bash
+            yum update -y
+            amazon-linux-extras install docker -y
+            systemctl start docker
+            systemctl enable docker
+            usermod -a -G docker ec2-user
+            curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" \
+            -o /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+            yum install python3 -y
+            amazon-linux-extras install epel -y
+            yum install python-pip -y
+            pip install ec2instanceconnectcli
+            eval "$(mssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no  \
+              --region ${AWS::Region} ${DockerManager1} docker swarm join-token worker | grep -i 'docker')"
+            # uninstall aws cli version 1
+            rm -rf /bin/aws
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            ./aws/install
+            yum install amazon-ecr-credential-helper -y
+            mkdir -p /home/ec2-user/.docker
+            cd /home/ec2-user/.docker
+            echo '{"credsStore": "ecr-login"}' > config.json
   DockerManager1:
     Type: AWS::EC2::Instance
     Properties:
@@ -168,18 +166,18 @@ Resources:
       IamInstanceProfile: !Ref EC2ConnectProfile
       SecurityGroupIds:
         - !GetAtt DockerMachinesSecurityGroup.GroupId
-      Tags:                
+      Tags:
         - Key: Name
-          Value: !Sub Docker Manager 1st of ${AWS::StackName}                      
+          Value: !Sub Docker Manager 1st of ${AWS::StackName}
         - Key: server
-          Value: docker-grand-master
+          Value: docker-leader-master
         - Key: project
           Value: "204"
-      UserData: 
+      UserData:
         Fn::Base64: |
           #! /bin/bash
           yum update -y
-          hostnamectl set-hostname Grand-Master
+          hostnamectl set-hostname Leader-Master
           amazon-linux-extras install docker -y
           systemctl start docker
           systemctl enable docker
@@ -211,10 +209,10 @@ Resources:
     Properties:
       LaunchTemplate:
         LaunchTemplateId: !Ref DockerSwarmManagerLT
-        Version: !GetAtt DockerSwarmManagerLT.LatestVersionNumber 
-      Tags:                
+        Version: !GetAtt DockerSwarmManagerLT.LatestVersionNumber
+      Tags:
         - Key: server
-          Value: docker-manager-2                       
+          Value: docker-manager-2
         - Key: Name
           Value: !Sub Docker Manager 2nd of ${AWS::StackName}
         - Key: project
@@ -227,9 +225,9 @@ Resources:
       LaunchTemplate:
         LaunchTemplateId: !Ref DockerSwarmManagerLT
         Version: !GetAtt DockerSwarmManagerLT.LatestVersionNumber
-      Tags:                
+      Tags:
         - Key: server
-          Value: docker-manager-3                        
+          Value: docker-manager-3
         - Key: Name
           Value: !Sub Docker Manager 3rd of ${AWS::StackName}
         - Key: project
@@ -242,9 +240,9 @@ Resources:
       LaunchTemplate:
         LaunchTemplateId: !Ref DockerSwarmWorkerLT
         Version: !GetAtt DockerSwarmWorkerLT.LatestVersionNumber
-      Tags:                
+      Tags:
         - Key: server
-          Value: docker-worker-1                       
+          Value: docker-worker-1
         - Key: Name
           Value: !Sub Docker Worker 1st of ${AWS::StackName}
         - Key: project
@@ -256,44 +254,42 @@ Resources:
     Properties:
       LaunchTemplate:
         LaunchTemplateId: !Ref DockerSwarmWorkerLT
-        Version: !GetAtt DockerSwarmWorkerLT.LatestVersionNumber 
-      Tags:                
+        Version: !GetAtt DockerSwarmWorkerLT.LatestVersionNumber
+      Tags:
         - Key: server
-          Value: docker-worker-2                       
+          Value: docker-worker-2
         - Key: Name
           Value: !Sub Docker Worker 2nd of ${AWS::StackName}
         - Key: project
-          Value: "204" 
+          Value: "204"
 Outputs:
   1stDockerManagerDashboard:
     Description: Dashboard for Docker Swarm
-    Value: !Sub 
+    Value: !Sub
       - http://${PublicAddress}:8080
       - PublicAddress: !GetAtt DockerManager1.PublicDnsName
   1stDockerManagerDNSName:
     Description: Docker Manager 1st DNS Name
-    Value: !Sub 
+    Value: !Sub
       - ${PublicAddress}
       - PublicAddress: !GetAtt DockerManager1.PublicDnsName
   2ndDockerManagerDNSName:
     Description: Docker Manager 2nd DNS Name
-    Value: !Sub 
+    Value: !Sub
       - ${PublicAddress}
       - PublicAddress: !GetAtt DockerManager2.PublicDnsName
   3rdDockerManagerDNSName:
     Description: Docker Manager 3rd DNS Name
-    Value: !Sub 
+    Value: !Sub
       - ${PublicAddress}
       - PublicAddress: !GetAtt DockerManager3.PublicDnsName
   1stDockerWorkerDNSName:
     Description: Docker Worker 1st DNS Name
-    Value: !Sub 
+    Value: !Sub
       - ${PublicAddress}
       - PublicAddress: !GetAtt DockerWorker1.PublicDnsName
   2ndDockerWorkerDNSName:
     Description: Docker Worker 2nd DNS Name
-    Value: !Sub 
+    Value: !Sub
       - ${PublicAddress}
       - PublicAddress: !GetAtt DockerWorker2.PublicDnsName
-  
-  
